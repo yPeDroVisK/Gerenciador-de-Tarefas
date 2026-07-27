@@ -1,11 +1,16 @@
-# Modelo da tabela User , Funciona como se fosse uma planta para Tabela real de User
+# Modelo da tabela User , Funciona como se fosse uma estrutura para Tabela real de User
+from __future__ import annotations
+from typing import TYPE_CHECKING
 
 from datetime import datetime
 
 from sqlalchemy import DateTime, String, func
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from ..database import Base
+
+if TYPE_CHECKING:
+    from .task import Task
 
 class User(Base):
 
@@ -15,7 +20,7 @@ class User(Base):
     __tablename__ = "users" # Define o nome da tabela
 
     id:Mapped[int] = mapped_column(
-        primary_key=True, 
+        primary_key=True, # Cria ID distintos para cada usuário , nunca se repete e não pode ser vazio
     )
 
     name:Mapped[str] = mapped_column(
@@ -26,7 +31,7 @@ class User(Base):
     email:Mapped[str] = mapped_column(
         String(255),
         unique=True, # Não permite que o dado se repita
-        index=True, # Cria uma estrutura para acelerar o sistema de consulta
+        index=True, # Cria uma estrutura para o sistema de consulta , adiciona um índice
         nullable=False,
     )
 
@@ -48,4 +53,8 @@ class User(Base):
         nullable=False,
     )
 
+    tasks:Mapped[list["Task"]] = relationship(
+        back_populates="owner",
+        cascade="all, delete-orphan",
+    )
 
