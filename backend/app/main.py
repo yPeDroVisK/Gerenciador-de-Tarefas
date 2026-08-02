@@ -1,5 +1,7 @@
 from fastapi import FastAPI
 
+from .routes import auth_router
+
 # Testando coneção com API
 
 app = FastAPI(
@@ -8,8 +10,9 @@ app = FastAPI(
     version="0.1.0",
 )
 
-@app.get("/")
+app.include_router(auth_router)
 
+@app.get("/")
 def root():
     return{
         "message": "TaskFlow API está rodando",
